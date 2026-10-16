@@ -1,0 +1,25 @@
+name: Windows build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+      - uses: lukka/get-cmake@latest
+      - name: Configure
+        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+      - name: Build
+        run: cmake --build build --config Release --parallel
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: UltraASIOLab-Windows-x64
+          path: |
+            build/Release/UltraASIOLab.exe
+            build/UltraASIOLab_artefacts/Release/UltraASIOLab.exe
+          if-no-files-found: warn
